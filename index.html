@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quebec home purchase: three scenarios</title>
+<meta name="description" content="Compare three Quebec home-purchase scenarios side by side: cash at closing, monthly outlay and unrecoverable cost.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EEF0; --panel:#F8FAFB; --ink:#17242C; --muted:#5B6B75; --line:#C9D3D8;
+  --a:#1F6F78; --b:#B7791F; --c:#7B4A8E;
+  --k1:#2F4858; --k2:#5E8A9A; --k3:#A9C1CA; --k4:#C9A86A;
+  --warn:#9A3B1E; --warnbg:#F6E3DA;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10181D; --panel:#18232A; --ink:#E3EAEE; --muted:#93A3AD; --line:#2C3A42;
+    --a:#4FB3BD; --b:#E0A74A; --c:#B58AC9;
+    --k1:#8FB3C2; --k2:#5E8A9A; --k3:#39525C; --k4:#C9A86A;
+    --warn:#F0A58A; --warnbg:#3A241C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10181D; --panel:#18232A; --ink:#E3EAEE; --muted:#93A3AD; --line:#2C3A42;
+  --a:#4FB3BD; --b:#E0A74A; --c:#B58AC9;
+  --k1:#8FB3C2; --k2:#5E8A9A; --k3:#39525C; --k4:#C9A86A;
+  --warn:#F0A58A; --warnbg:#3A241C;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,.num{font-family:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif}
+h1{font-size:clamp(26px,4.5vw,40px);line-height:1.05;margin:4px 0 6px;font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px;margin:0 0 4px;font-weight:600}
+.lede{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:0 0 16px}
+.bar label{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.scen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.scen{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--sc);border-radius:6px;padding:14px}
+.card header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.tag{font-family:"Barlow Semi Condensed",sans-serif;font-weight:700;font-size:26px;color:var(--sc);line-height:1}
+.card header input{flex:1;font-weight:600;font-size:16px;border:none;border-bottom:1px dashed var(--line);background:transparent;color:var(--ink);padding:2px 0}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f span{font-size:12.5px;color:var(--muted)}
+.f .in{display:flex;align-items:center;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.f .in:focus-within{outline:2px solid var(--sc);outline-offset:1px}
+.f input,.f select{width:100%;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;padding:7px 8px;outline:none}
+.f em{font-style:normal;color:var(--muted);font-size:12.5px;padding-right:8px;white-space:nowrap}
+
+.fields>.f{order:2}
+.fields>.f:has([data-k=price]){order:0;grid-column:1 / -1}
+.f.wide{grid-column:1 / -1;order:1}
+.pair{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
+.card header button{font:inherit;font-size:12.5px;font-weight:500;color:var(--sc);background:transparent;border:1px solid var(--sc);border-radius:4px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+.card header button:active{background:var(--sc);color:var(--panel)}
+.f small{font-size:12px;color:var(--muted)}
+.warns{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.warns div{background:var(--warnbg);color:var(--warn);font-size:12.5px;padding:6px 8px;border-radius:4px}
+section{margin-top:28px}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;color:var(--muted);font-weight:400}
+thead th{font-family:"Barlow Semi Condensed",sans-serif;font-size:17px;font-weight:600}
+tr.key td{font-weight:600;color:var(--ink)}
+tr.key td:first-child{color:var(--ink)}
+td.best{box-shadow:inset 3px 0 0 var(--sc)}
+tbody tr:last-child td{border-bottom:0}
+.note{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:860px){.charts{grid-template-columns:1fr}}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.chart h3{margin:0 0 2px;font-size:16px;font-weight:600}
+.chart p{margin:0 0 8px;color:var(--muted);font-size:12.5px}
+.cv{position:relative;min-height:240px}
+.cv svg{display:block;touch-action:pan-y}
+.tk{font-size:11px;fill:var(--muted)}
+.tv{font-size:12px;font-weight:600;fill:var(--ink)}
+.tl{font-size:13px;font-weight:700;font-family:"Barlow Semi Condensed",sans-serif}
+.lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ink);margin-top:6px}
+.lg i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ro{font-size:12.5px;color:var(--muted);min-height:1.5em;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.ro b{font-weight:600}
+details{margin-top:28px;color:var(--muted);font-size:13.5px;max-width:80ch}
+details summary{cursor:pointer;color:var(--ink);font-weight:500}
+details li{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Buying a home in Quebec: three scenarios side by side</h1>
+  <p class="lede">Change any input and every number and chart updates. Cash at closing, monthly outlay and the money you never get back (interest, taxes, fees) are compared over the horizon you pick.</p>
+
+  <div class="bar">
+    <label>Comparison horizon
+      <span class="f"><span class="in" style="--sc:var(--a)"><input id="horizon" type="number" min="1" max="30" step="1" value="5" style="width:64px"><em>years</em></span></span>
+    </label>
+  </div>
+
+  <div class="scen" id="scen"></div>
+
+  <section>
+    <h2>Comparison</h2>
+    <div class="tbl"><table id="tbl"></table></div>
+    <p class="note">A coloured bar marks the lowest value in rows where lower is better.</p>
+  </section>
+
+  <section>
+    <h2>Charts</h2>
+    <div class="charts">
+      <div class="chart"><h3>Cash needed at closing</h3><p>Down payment plus one-time costs paid out of pocket.</p><div class="cv" id="cCash"></div></div>
+      <div class="chart"><h3>Monthly outlay, first-year average</h3><p>Principal builds equity; interest and taxes don't.</p><div class="cv" id="cMonthly"></div></div>
+      <div class="chart"><h3>Mortgage balance</h3><p>Outstanding balance at the end of each year.</p><div class="cv" id="cBal"></div></div>
+      <div class="chart"><h3>Cumulative unrecoverable cost</h3><p>Interest + property/school tax + welcome tax + CMHC + QST + closing fees.</p><div class="cv" id="cSunk"></div></div>
+    </div>
+  </section>
+
+  <details>
+    <summary>Assumptions and sources</summary>
+    <ul>
+      <li>Canadian fixed-rate convention: the quoted rate compounds semi-annually, payments are monthly. The rate is held constant for the full amortization (no renewal risk modelled).</li>
+      <li>Welcome tax (droits de mutation), 2026 brackets. Montreal: 0.5% to $62,900; 1% to $315,000; 1.5% to $552,300; 2% to $1,104,700; 2.5% to $2,136,500; 3.5% to $3,113,000; 4% above. "Elsewhere in Quebec" uses the provincial default (0.5% / 1% / 1.5% above $315,000); some municipalities add higher brackets above $500k. Tax base assumed equal to purchase price.</li>
+      <li>Mortgage default insurance (CMHC) when down payment is under 20%: 4.00% (5–9.99% down), 3.10% (10–14.99%), 2.80% (15–19.99%), plus 0.20% for amortizations over 25 years. Premium is added to the loan; Quebec's 9% tax on the premium is paid in cash at closing.</li>
+      <li>Minimum down payment: 5% of the first $500,000, 10% of the portion up to $1.5M, 20% at $1.5M and above.</li>
+      <li>Property + school tax is approximated as a flat % of purchase price; check the actual assessment and borough rate for a real listing.</li>
+      <li>Not included: appreciation, maintenance, home insurance, condo fees, utilities, opportunity cost of the down payment, first-time buyer tax credits.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+const LETTERS=['A','B','C'];
+const S=[
+  {name:'Base case',        price:650000, down:20, rate:4.19, amort:25, taxRate:0.80, region:'mtl', other:3000, downMode:'pct'},
+  {name:'Low down payment', price:650000, down:10, rate:3.99, amort:25, taxRate:0.80, region:'mtl', other:3000, downMode:'pct'},
+  {name:'Bigger house',     price:800000, down:20, rate:4.19, amort:25, taxRate:0.80, region:'mtl', other:3000, downMode:'pct'},
+];
+S.forEach(s=>s.downAmt=s.price*s.down/100);
+const FIELDS=[
+  ['price','Purchase price','$',5000],
+  ['rate','Interest rate (fixed)','%',0.01],
+  ['amort','Amortization','years',1],
+  ['taxRate','Property + school tax','% / yr',0.05],
+  ['other','Notary, inspection, other','$',250],
+];
+const BR={
+  mtl:[[62900,.005],[315000,.01],[552300,.015],[1104700,.02],[2136500,.025],[3113000,.035],[Infinity,.04]],
+  qc:[[62900,.005],[315000,.01],[Infinity,.015]]
+};
+let horizon=5;
+
+const fmt=new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0});
+const $=v=>fmt.format(Math.round(v));
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const scol=i=>css(['--a','--b','--c'][i]);
+
+function welcomeTax(p,reg){let t=0,lo=0;for(const [hi,r] of BR[reg]){if(p>lo)t+=(Math.min(p,hi)-lo)*r;lo=hi;}return t;}
+function minDown(p){return p<=500000?.05*p:p<1500000?25000+.10*(p-500000):.20*p;}
+function cmhcRate(ltv,am){if(ltv<=.80)return 0;let r=ltv<=.85?.028:ltv<=.90?.031:.04;if(am>25)r+=.002;return r;}
+
+function calc(s){
+  const P=+s.price||0, D=Math.min(P,s.downMode==='amt'?(+s.downAmt||0):P*(+s.down||0)/100), base=Math.max(P-D,0), ltv=P?base/P:0;
+  const insured=ltv>.80;
+  const prem=base*cmhcRate(ltv,s.amort), qst=prem*.09;
+  const L=base+prem;
+  const i=Math.pow(1+(+s.rate||0)/200,1/6)-1;
+  const N=Math.max(1,Math.round((+s.amort||1)*12));
+  const M=i===0?L/N:L*i/(1-Math.pow(1+i,-N));
+  const wt=welcomeTax(P,s.region);
+  const taxY=P*(+s.taxRate||0)/100;
+  const oneTime=wt+prem+qst+(+s.other||0);
+  let bal=L,cumI=0,y1I=0,y1P=0;
+  const balY=[L],cumIY=[0];
+  for(let k=1;k<=N;k++){
+    const int=bal*i, pr=Math.min(M-int,bal);
+    bal-=pr;cumI+=int;
+    if(k<=12){y1I+=int;y1P+=pr;}
+    if(k%12===0){balY.push(Math.max(bal,0));cumIY.push(cumI);}
+  }
+  if(N%12){balY.push(0);cumIY.push(cumI);}
+  const at=(arr,y)=>arr[Math.min(y,arr.length-1)];
+  const sunkY=y=>at(cumIY,y)+taxY*y+oneTime;
+  const warns=[];
+  const md=minDown(P);
+  if(D+0.5<md) warns.push(`Below the legal minimum down payment of ${$(md)}.`);
+  if(P>=1500000&&ltv>.80) warns.push('Homes of $1.5M+ need 20% down (no insurance available).');
+  if(insured&&s.amort>30) warns.push('Insured mortgages are capped at 30 years.');
+  else if(insured&&s.amort>25) warns.push('30-year insured amortization is only for first-time buyers or new builds (+0.20% premium applied).');
+  if(!insured&&s.amort>30) warns.push('Most lenders cap amortization at 30 years.');
+  return {P,D,prem,qst,L,M,wt,taxM:taxY/12,other:+s.other||0,
+    cash:D+wt+qst+(+s.other||0),y1I:y1I/12,y1P:y1P/12,
+    balY,cumIY,sunkY,balH:at(balY,horizon),intH:at(cumIY,horizon),
+    sunkH:sunkY(horizon),intAll:cumI,md,warns,insured,years:balY.length-1};
+}
+
+// ---------- inputs ----------
+const scenEl=document.getElementById('scen');
+S.forEach((s,idx)=>{
+  const c=document.createElement('div');
+  c.className='card';c.style.setProperty('--sc',`var(${['--a','--b','--c'][idx]})`);
+  c.innerHTML=`<header><span class="tag">${LETTERS[idx]}</span><input aria-label="Scenario ${LETTERS[idx]} name" data-k="name" value="${s.name}">${idx===0?'<button type="button" data-copy>Copy to B &amp; C</button>':''}</header>
+  <div class="fields">
+    <div class="f wide"><span>Down payment <span data-o="downMode"></span></span>
+      <div class="pair">
+        <span class="in"><input type="number" inputmode="decimal" step="0.5" min="0" max="100" data-k="down" aria-label="Down payment percent"><em>%</em></span>
+        <span class="in"><em style="padding:0 0 0 8px">$</em><input type="number" inputmode="decimal" step="1000" min="0" data-k="downAmt" aria-label="Down payment amount"></span>
+      </div><small data-o="downAmt"></small></div>
+    ${FIELDS.map(([k,l,u,st])=>`<label class="f"><span>${l}</span><span class="in">${u==='$'?'<em style="padding:0 0 0 8px">$</em>':''}<input type="number" inputmode="decimal" step="${st}" min="0" data-k="${k}" value="${s[k]}">${u!=='$'?`<em>${u}</em>`:''}</span></label>`).join('')}
+    <label class="f"><span>Location (welcome tax)</span><span class="in"><select data-k="region"><option value="mtl">Montreal</option><option value="qc">Elsewhere in Quebec</option></select></span></label>
+  </div>
+  <div class="warns" data-o="warns"></div>`;
+  c.querySelector('select').value=s.region;
+  c.addEventListener('input',e=>{
+    const k=e.target.dataset.k;if(!k)return;
+    s[k]=(k==='name'||k==='region')?e.target.value:parseFloat(e.target.value);
+    if(k==='down')s.downMode='pct';
+    if(k==='downAmt')s.downMode='amt';
+    update();
+  });
+  const cp=c.querySelector('[data-copy]');
+  if(cp)cp.addEventListener('click',()=>{
+    for(let j=1;j<S.length;j++){const n=S[j].name;Object.assign(S[j],JSON.parse(JSON.stringify(S[0])));S[j].name=n;}
+    update();
+    cp.textContent='Copied ✓';setTimeout(()=>cp.textContent='Copy to B & C',1400);
+  });
+  c.addEventListener('change',update);
+  scenEl.appendChild(c);
+});
+document.getElementById('horizon').addEventListener('input',e=>{
+  const v=parseInt(e.target.value,10);if(v>=1&&v<=40){horizon=v;update();}
+});
+
+// ---------- charts (self-drawn SVG, no external library) ----------
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function niceStep(max,n){const raw=max/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;}
+const kfmt=v=>v>=1e6?`$${+(v/1e6).toFixed(2)}M`:v>=1e3?`$${+(v/1e3).toFixed(1)}k`:`$${Math.round(v)}`;
+function frame(el,maxV){
+  const W=Math.max(280,el.clientWidth||600),H=240,m={l:54,r:14,t:20,b:30};
+  const mv=maxV>0?maxV:1,step=niceStep(mv,5),top=Math.ceil(mv/step)*step;
+  const y=v=>m.t+(H-m.t-m.b)*(1-v/top);
+  let g='';
+  for(let k=0;k*step<=top+1e-9;k++){const v=k*step;
+    g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end" class="tk">${kfmt(v)}</text>`;}
+  return {W,H,m,y,g};
+}
+const legend=series=>`<div class="lg">${series.map(s=>`<span><i style="background:${s.color}"></i>${esc(s.label)}</span>`).join('')}</div>`;
+function drawBars(id,labels,series){
+  const el=document.getElementById(id);
+  const tot=labels.map((_,i)=>series.reduce((a,s)=>a+(s.data[i]||0),0));
+  const {W,H,m,y,g}=frame(el,Math.max(...tot)*1.1);
+  const n=labels.length,bw=Math.min(84,(W-m.l-m.r)/n*0.55);
+  let b='';
+  labels.forEach((l,i)=>{
+    const cx=m.l+(W-m.l-m.r)*(i+.5)/n;let acc=0;
+    series.forEach(s=>{const v=s.data[i]||0;
+      if(v>0)b+=`<rect x="${cx-bw/2}" y="${y(acc+v)}" width="${bw}" height="${Math.max(0,y(acc)-y(acc+v))}" fill="${s.color}"><title>${esc(s.label)}: ${$(v)}</title></rect>`;
+      acc+=v;});
+    b+=`<text x="${cx}" y="${y(acc)-6}" text-anchor="middle" class="tv">${$(acc)}</text>`;
+    b+=`<text x="${cx}" y="${H-m.b+19}" text-anchor="middle" class="tl" fill="${scol(i)}">${l}</text>`;
+  });
+  el.innerHTML=`<svg width="${W}" height="${H}" role="img">${g}${b}</svg>`+legend(series);
+}
+function drawLines(id,xs,series,initX){
+  const el=document.getElementById(id);
+  const all=series.flatMap(s=>s.data.filter(v=>v!=null));
+  const {W,H,m,y,g}=frame(el,Math.max(...all)*1.05);
+  const xmax=xs[xs.length-1]||1,x=v=>m.l+(W-m.l-m.r)*v/xmax;
+  let ax='';const xs_=Math.max(1,niceStep(xmax,6));
+  for(let v=0;v<=xmax;v+=xs_)ax+=`<text x="${x(v)}" y="${H-m.b+17}" text-anchor="middle" class="tk">${v}</text>`;
+  ax+=`<text x="${W-m.r}" y="${H-2}" text-anchor="end" class="tk">year</text>`;
+  const paths=series.map(s=>{let d='',pen=false;
+    s.data.forEach((v,k)=>{if(v==null){pen=false;return;}d+=`${pen?'L':'M'}${x(xs[k]).toFixed(1)},${y(v).toFixed(1)}`;pen=true;});
+    return `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round"/>`;}).join('');
+  el.innerHTML=`<div class="ro"></div><svg width="${W}" height="${H}" role="img">${g}${ax}${paths}<g class="cross"></g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/></svg>`+legend(series);
+  const svg=el.querySelector('svg'),cross=el.querySelector('.cross'),ro=el.querySelector('.ro');
+  const show=k=>{k=Math.max(0,Math.min(xs.length-1,k));const X=x(xs[k]);
+    cross.innerHTML=`<line x1="${X}" x2="${X}" y1="${m.t}" y2="${H-m.b}" stroke="var(--muted)" stroke-dasharray="3 3"/>`+
+      series.map(s=>s.data[k]==null?'':`<circle cx="${X}" cy="${y(s.data[k])}" r="4" fill="${s.color}"/>`).join('');
+    ro.innerHTML=`Year ${xs[k]}: `+series.map((s,i)=>`<b style="color:${s.color}">${LETTERS[i]}</b> ${s.data[k]==null?'paid off':$(s.data[k])}`).join('&nbsp;&nbsp; ');};
+  const move=e=>{const r=svg.getBoundingClientRect();show(Math.round((e.clientX-r.left-m.l)/(W-m.l-m.r)*xmax));};
+  svg.addEventListener('pointermove',move);svg.addEventListener('pointerdown',move);
+  show(initX);
+}
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(update,150);});
+
+// ---------- render ----------
+function best(vals){const m=Math.min(...vals);return vals.map(v=>Math.abs(v-m)<0.5);}
+function update(){
+  const R=S.map(calc);
+  const names=S.map((s,i)=>`${LETTERS[i]}: ${s.name}`);
+
+  document.querySelectorAll('.card').forEach((c,i)=>{
+    const r=R[i];
+    const s=S[i];
+    if(s.downMode==='amt')s.down=r.P?+(100*r.D/r.P).toFixed(2):0; else s.downAmt=Math.round(r.D);
+    c.querySelectorAll('[data-k]').forEach(el=>{if(el!==document.activeElement){const v=s[el.dataset.k];if(v!==undefined&&String(el.value)!==String(v))el.value=v;}});
+    c.querySelector('[data-o="downMode"]').textContent=s.downMode==='amt'?'(fixed $ held when price changes)':'(fixed % held when price changes)';
+    c.querySelector('[data-o="downAmt"]').textContent=`Legal minimum: ${$(r.md)}`;
+    c.querySelector('[data-o="warns"]').innerHTML=r.warns.map(w=>`<div>${w}</div>`).join('');
+  });
+
+  const rows=[
+    ['Down payment',r=>r.D,false],
+    ['Welcome tax',r=>r.wt,true],
+    ['CMHC premium (added to loan)',r=>r.prem,true],
+    ['QST on CMHC premium (cash)',r=>r.qst,true],
+    ['Notary, inspection, other',r=>r.other,true],
+    ['Cash needed at closing',r=>r.cash,true,'key'],
+    ['Mortgage amount',r=>r.L,false],
+    ['Mortgage payment / month',r=>r.M,true],
+    ['Property + school tax / month',r=>r.taxM,true],
+    ['Total monthly outlay',r=>r.M+r.taxM,true,'key'],
+    [`Balance after ${horizon} yr`,r=>r.balH,false],
+    [`Interest paid over ${horizon} yr`,r=>r.intH,true],
+    [`Unrecoverable cost over ${horizon} yr`,r=>r.sunkH,true,'key'],
+    ['Interest over full amortization',r=>r.intAll,true],
+  ];
+  const tbl=document.getElementById('tbl');
+  tbl.innerHTML=`<thead><tr><th></th>${names.map((n,i)=>`<th style="color:${scol(i)}">${n}</th>`).join('')}</tr></thead><tbody>${
+    rows.map(([l,f,low,cls])=>{
+      const v=R.map(f),b=low?best(v):[0,0,0];
+      return `<tr class="${cls||''}"><td>${l}</td>${v.map((x,i)=>`<td class="${b[i]?'best':''}" style="--sc:${scol(i)}">${$(x)}</td>`).join('')}</tr>`;
+    }).join('')}</tbody>`;
+
+  const K=['--k1','--k2','--k3','--k4'].map(css);
+  drawBars('cCash',LETTERS,[
+    {label:'Down payment',data:R.map(r=>r.D),color:K[0]},
+    {label:'Welcome tax',data:R.map(r=>r.wt),color:K[3]},
+    {label:'QST on CMHC',data:R.map(r=>r.qst),color:K[1]},
+    {label:'Other fees',data:R.map(r=>r.other),color:K[2]}]);
+  drawBars('cMonthly',LETTERS,[
+    {label:'Principal',data:R.map(r=>r.y1P),color:K[0]},
+    {label:'Interest',data:R.map(r=>r.y1I),color:K[3]},
+    {label:'Property + school tax',data:R.map(r=>r.taxM),color:K[2]}]);
+  const maxY=Math.max(...R.map(r=>r.years));
+  const yrs=[...Array(maxY+1).keys()];
+  drawLines('cBal',yrs,R.map((r,i)=>({label:names[i],color:scol(i),data:yrs.map(y=>y<=r.years?r.balY[y]:null)})),horizon);
+  drawLines('cSunk',yrs,R.map((r,i)=>({label:names[i],color:scol(i),data:yrs.map(y=>r.sunkY(y))})),horizon);
+}
+update();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',update);
+</script>
+</body>
+</html>
