@@ -94,6 +94,89 @@ tbody tr:last-child td{border-bottom:0}
 details{margin-top:28px;color:var(--muted);font-size:13.5px;max-width:80ch}
 details summary{cursor:pointer;color:var(--ink);font-weight:500}
 details li{margin:4px 0}
+/* ---------- print ---------- */
+@page{margin:11mm}
+@media print{
+  /* always print on white, whatever the screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --bg:#fff; --panel:#fff; --ink:#111; --muted:#4A5560; --line:#B4BFC5;
+    --a:#1F6F78; --b:#8A5A0F; --c:#6B3F7C;
+    --k1:#2F4858; --k2:#5E8A9A; --k3:#A9C1CA; --k4:#C9A86A;
+    --warn:#7A2E17; --warnbg:#F4E6E0;
+  }
+  html,body{background:#fff}
+  body{font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding:0}
+  h1{font-size:17pt;margin:0 0 3px}
+  h2{font-size:12.5pt;break-after:avoid;page-break-after:avoid}
+  .lede{max-width:none;margin:0 0 8px;font-size:9pt}
+  section{margin-top:12px}
+  .note{margin-top:4px}
+
+  /* the 860px breakpoint matches a print page, so restore the columns */
+  .scen{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .charts{grid-template-columns:1fr 1fr;gap:9px}
+
+  /* nothing splits across a page boundary */
+  .card,.chart,.tbl,details{break-inside:avoid;page-break-inside:avoid}
+  tr,.lg,.ro,.chart h3,.chart p{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+
+  /* the scroll container would clip columns on paper */
+  .tbl{overflow:visible}
+  table{min-width:0;width:100%}
+  th,td{padding:3px 6px}
+  thead th{font-size:11pt}
+
+  /* charts scale to the page instead of their on-screen pixel width */
+  .cv{min-height:0}
+  .cv svg{width:100%;height:auto;max-height:210px}
+  .chart{padding:9px}
+  .chart h3{font-size:10.5pt}
+  .chart p{margin-bottom:4px;font-size:8.5pt}
+  .lg{font-size:8.5pt;gap:2px 9px}
+  .ro{font-size:8.5pt;margin-bottom:2px}
+
+  /* scenario cards become compact spec sheets: label left, value right */
+  .card{padding:8px;border-top-width:3px;break-inside:avoid}
+  .card header{margin-bottom:5px;gap:6px}
+  .card header .tag{font-size:19px}
+  .card header input{border-bottom:0;font-size:10.5pt}
+  .fields{grid-template-columns:1fr;gap:0}
+  .fields>.f,.fields>.f:has([data-k=price]),.f.wide{grid-column:auto}
+  .f{flex-direction:row;align-items:baseline;justify-content:space-between;
+     gap:6px;padding:1.5px 0;border-bottom:1px dotted var(--line)}
+  .f>span:first-child{font-size:8.5pt;flex:1 1 auto;line-height:1.25}
+  .f .in{flex:0 0 auto;width:auto;border:0;background:transparent;outline:0!important}
+  .f input,.f select{width:auto;text-align:right;font-size:9.5pt;font-weight:600;padding:0}
+  .f .in input{width:8ch}
+  .f em{padding:0 0 0 2px;font-size:8.5pt}
+  .f.wide{flex-direction:column;align-items:stretch;gap:2px}
+  .f.wide .pair{grid-template-columns:1fr 1fr;gap:4px}
+  .f.wide .pair .in{justify-content:flex-end}
+  .f small{font-size:8pt}
+  .warns{margin-top:5px}
+  .warns div{padding:3px 5px;font-size:8.5pt}
+
+  /* screen-only affordances */
+  .card header button{display:none}
+  .bar{margin-bottom:9px}
+  .bar .f{border-bottom:0;padding:0}
+  .bar .f .in input{width:3ch;text-align:right}
+  input[type=number]{-moz-appearance:textfield}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  select{appearance:none;-webkit-appearance:none}
+  details{font-size:8.5pt;margin-top:12px;max-width:none}
+  details summary{list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  a[href]::after{content:""}
+}
+/* landscape pages are short, so cap the charts to fit two rows per sheet */
+@media print and (orientation:landscape){
+  .cv svg{max-height:168px}
+  .chart{padding:7px}
+  section{margin-top:9px}
+}
 </style>
 </head>
 <body>
@@ -268,7 +351,7 @@ function drawBars(id,labels,series){
     b+=`<text x="${cx}" y="${y(acc)-6}" text-anchor="middle" class="tv">${$(acc)}</text>`;
     b+=`<text x="${cx}" y="${H-m.b+19}" text-anchor="middle" class="tl" fill="${scol(i)}">${l}</text>`;
   });
-  el.innerHTML=`<svg width="${W}" height="${H}" role="img">${g}${b}</svg>`+legend(series);
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" width="${W}" height="${H}" role="img">${g}${b}</svg>`+legend(series);
 }
 function drawLines(id,xs,series,initX){
   const el=document.getElementById(id);
@@ -281,13 +364,14 @@ function drawLines(id,xs,series,initX){
   const paths=series.map(s=>{let d='',pen=false;
     s.data.forEach((v,k)=>{if(v==null){pen=false;return;}d+=`${pen?'L':'M'}${x(xs[k]).toFixed(1)},${y(v).toFixed(1)}`;pen=true;});
     return `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round"/>`;}).join('');
-  el.innerHTML=`<div class="ro"></div><svg width="${W}" height="${H}" role="img">${g}${ax}${paths}<g class="cross"></g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/></svg>`+legend(series);
+  el.innerHTML=`<div class="ro"></div><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" width="${W}" height="${H}" role="img">${g}${ax}${paths}<g class="cross"></g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/></svg>`+legend(series);
   const svg=el.querySelector('svg'),cross=el.querySelector('.cross'),ro=el.querySelector('.ro');
   const show=k=>{k=Math.max(0,Math.min(xs.length-1,k));const X=x(xs[k]);
     cross.innerHTML=`<line x1="${X}" x2="${X}" y1="${m.t}" y2="${H-m.b}" stroke="var(--muted)" stroke-dasharray="3 3"/>`+
       series.map(s=>s.data[k]==null?'':`<circle cx="${X}" cy="${y(s.data[k])}" r="4" fill="${s.color}"/>`).join('');
     ro.innerHTML=`Year ${xs[k]}: `+series.map((s,i)=>`<b style="color:${s.color}">${LETTERS[i]}</b> ${s.data[k]==null?'paid off':$(s.data[k])}`).join('&nbsp;&nbsp; ');};
-  const move=e=>{const r=svg.getBoundingClientRect();show(Math.round((e.clientX-r.left-m.l)/(W-m.l-m.r)*xmax));};
+  const move=e=>{const r=svg.getBoundingClientRect(),sc=r.width/W||1;
+    show(Math.round(((e.clientX-r.left)/sc-m.l)/(W-m.l-m.r)*xmax));};
   svg.addEventListener('pointermove',move);svg.addEventListener('pointerdown',move);
   show(initX);
 }
@@ -348,6 +432,18 @@ function update(){
   drawLines('cSunk',yrs,R.map((r,i)=>({label:names[i],color:scol(i),data:yrs.map(y=>r.sunkY(y))})),horizon);
 }
 update();
+
+// ---------- print ----------
+// Expand <details> so the assumptions appear on paper, and redraw afterwards.
+const dets=[...document.querySelectorAll('details')];
+let wasOpen=[];
+window.addEventListener('beforeprint',()=>{
+  wasOpen=dets.map(d=>d.open);dets.forEach(d=>d.open=true);
+});
+window.addEventListener('afterprint',()=>{
+  dets.forEach((d,i)=>d.open=wasOpen[i]);update();
+});
+
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',update);
 </script>
 </body>
